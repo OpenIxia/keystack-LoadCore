@@ -1,0 +1,108 @@
+version: 1.0.0
+
+description:
+
+   - Load an exported configuration file
+   - start test
+   - Analyzes expected KPI values that is stated in the testcase yml file
+   - Get PDF, packet captures, logs and results in CSV and JSON format.
+
+keystack requirements:
+
+   - Env yml file
+   - Testcase yml file
+   - Create playbook or add testcase to playbook playlist
+
+instructions:
+
+   - Manually run test on LoadCore MW
+   - When test configuration is satisfied, export the config file
+   - Put the exported config file to:
+          /keystack_path/KeystackTests/Modules/LoadCore/ExportedConfigs
+   - Create testcase yml files
+   - Create an env file containing the LoadCore setup IP addresses and
+     login credentials
+   - Create a playbook to run testcase or add testcase to existing playbook
+   
+env yml file sample:
+   file location: /your_keysack_path/Keystack/Tests/Envs/loadcore_qa
+   
+   # Can this setup be used in parallel
+   parallelUsage: False
+
+   mwIp: 192.168.28.6
+   username: admin
+   password: admin
+
+   licenseServerIp: 192.168.28.6
+   licenseIpPort: 7443
+
+   # Legacy=vLM | Embeded=KCOS, External=ExternalKCOS
+   licenseServerType: KCOS
+
+   licenseServerUser: admin
+   licenseServerPassword: admin
+
+   # Add LoadCore agents here and uncomment
+   agents:
+     - agent:
+        ip: 192.168.28.137
+        interface: ens33
+
+     - agent:
+        ip: 192.168.28.138
+        interface: ens33
+
+
+testcase yml file sample:
+   file location: /your_path/KeystackTests/Modules/LoadCore/Testcases/fullcoreBase.yml
+
+   description: full core testing
+
+   objective: Unittest full core feautures
+
+   exportedConfigFile: sample_fullCore.zip  <-- The exported config file
+
+   pythonScript: /Apps/LoadCore/runLoadCore.py
+
+   configParametersFile: None  <-- parameter/values for scripts to consume and modify configs
+
+   importAppLibraryPaths:
+      - /Apps/LoadCore
+   
+   # Note: Get the KPI from a manual test run. After the test, download the CSV logs/results
+   #       There is a CSV folder containing hundreds of csv filenames of KPIs.
+   KPI:
+     Fullcorengran_NGSetup:
+        - NG Setup Failure Rx=0
+        - NG Setup Request Tx=0
+
+     Fullcorengran_NGRANRegistrationprocedure:
+        - Registration Succeeded>80
+        - Registration Failed=0
+        - Registration TimedOut=0
+
+playbook yml file sample:
+  file location: /your_path/KeystackTests/Playbooks/runLoadCore.yml
+  
+  stages:
+      LoadCoreTest:
+
+        modules:
+         - /Modules/LoadCore:
+            env: loadcore_qa
+            playlist:
+                - /Modules/LoadCore/Testcases/fullcoreBase.yml
+
+            rebootAgentsBeforeEachTest: False
+            deleteTestLogsAndResultsOnLoadCore: True
+            waitTimeBetweenTests: 0
+            deleteSession: True
+            deleteSessionOnFailure: True
+            abortOnFailure: False
+            getPdfResultsFile: True
+            getCsvResultsFile: True
+            getCapturesAndLogs: True
+
+
+
