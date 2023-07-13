@@ -55,12 +55,10 @@ RECONFIGURATION:
                               {agentIp: 172.16.1.41, interface: ens33, portCapture: True}
                               ]
 """
-from dataclasses import make_dataclass
 import requests, sys, os, json, time, platform, re, yaml, subprocess, traceback
 import datetime, shutil
 from pprint import pformat, pprint
-
-from utilities import readJson, writeToJson, getTimestamp, getDictItemFromList, makeFolder
+from keystackUtilities import readJson, writeToJson, getTimestamp, getDictItemFromList, makeFolder
 
 # Disable SSL warnings
 requests.packages.urllib3.disable_warnings()
@@ -68,7 +66,6 @@ requests.packages.urllib3.disable_warnings()
 # Disable non http connections.
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
         
 class Logger():
     def logMsg(self, msgType, msg, includeTimestamp=True):

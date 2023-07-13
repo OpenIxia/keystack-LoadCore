@@ -1,11 +1,10 @@
 """
 Tested with LoadCore 2.20, 2.30, 3.20, 3.40
 """
-
 import traceback
 from keystackEnv import keystackObj
 from LoadCore.LoadCoreLib import Main
-    
+
 try:
     # TODO: Bogdan will provided new rest apis to verify required licenses for license verification
     '''
@@ -21,7 +20,6 @@ try:
         if licenseCheckResult:
             raise Exception(f'LoadCore licenses are not available: {licenseCheckResult}')
     '''
-
     Main(keystackObj).runTestcase()
 
 except Exception as errMsg:
